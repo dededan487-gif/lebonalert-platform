@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: lebonalert-platform-premium
+    env: python
+    region: frankfurt
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 8 --timeout 120 app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATA_DIR
+        value: /tmp/data
+      - key: SECRET_KEY
+        generateValue: true
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_PRICE_ID
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+    healthCheckPath: /health
