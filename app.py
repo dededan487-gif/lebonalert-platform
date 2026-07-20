@@ -202,8 +202,8 @@ def init_db():
     )""")
     db.commit()
     # Premier admin si aucun user
-    cur.execute("SELECT COUNT(*) as c FROM users")
-    if cur.fetchone()['c'] == 0:
+     cur.execute("SELECT COUNT(*) as c FROM users")
+    if cur.fetchone()[0] == 0:
         print("📝 Aucun user, création admin par défaut: admin / admin123")
         cur.execute("INSERT INTO users (username, email, password_hash, created_at, is_admin, is_premium, email_enabled) VALUES (?, ?, ?, ?, 1, 1, 1)",
                     ("admin", "admin@lebonalert.fr", generate_password_hash("admin123"), datetime.now().isoformat()))
