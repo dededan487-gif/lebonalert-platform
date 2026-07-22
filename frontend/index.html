@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeBonAlert Platform - SaaS Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c10;--panel:#141821;--panel2:#1c212e;--border:#212838;--text:#eef2f7;--muted:#8a95a8;
+  --primary:#ff6a00;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:radial-gradient(1200px 600px at 10% -10%, #ff6a0018, transparent), var(--bg);color:var(--text);min-height:100vh}
+.auth-wrapper{min-height:100vh;display:grid;place-items:center;padding:20px}
+.auth-card{width:100%;max-width:460px;background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:32px;box-shadow:0 20px 60px #00000060}
+.auth-card h1{font-size:28px;font-weight:800;letter-spacing:-0.03em}
+.auth-card h1 span{color:var(--primary)}
+.auth-card p{color:var(--muted);margin:8px 0 24px;line-height:1.5;font-size:14px}
+.auth-tabs{display:flex;background:#0e1118;border:1px solid var(--border);border-radius:999px;padding:4px;margin-bottom:20px}
+.auth-tab{flex:1;padding:10px;border:none;background:transparent;color:var(--muted);border-radius:999px;cursor:pointer;font-weight:600;font-size:14px}
+.auth-tab.active{background:var(--text);color:var(--bg)}
+.auth-form label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;display:block;margin:14px 0 6px}
+.auth-form input{width:100%;padding:12px 14px;border-radius:10px;background:#0e1118;border:1px solid var(--border);color:var(--text);font-size:14px;outline:none}
+.auth-form input:focus{border-color:var(--primary);box-shadow:0 0 0 3px #ff6a0018}
+.btn-primary{width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--primary),#ff9d33);color:white;font-weight:700;font-size:14px;cursor:pointer;margin-top:18px;transition:.15s}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-ghost{padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:13px}
+.btn-ghost:hover{color:var(--text);border-color:#3a445c}
+.auth-error{background:#ef444422;border:1px solid #ef444433;color:#fca5a5;padding:10px 12px;border-radius:10px;font-size:13px;margin-bottom:14px;display:none}
+.auth-error.show{display:block}
+.plans-preview{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.plan-mini{border:1px solid var(--border);border-radius:12px;padding:12px;background:#0e1118}
+.plan-mini.premium{border-color:var(--primary);background:linear-gradient(135deg,#ff6a0020,#ff9d0010)}
+.plan-mini strong{display:block;font-size:13px}
+.plan-mini span{font-size:11px;color:var(--muted)}
+
+.app{display:none;min-height:100vh}
+.app.show{display:flex}
+.sidebar{width:390px;background:linear-gradient(180deg,var(--panel),#0f131d);border-right:1px solid var(--border);padding:20px;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
+.logo{display:flex;gap:12px;align-items:center}
+.logo-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#ffb347);display:grid;place-items:center;font-size:20px;box-shadow:0 8px 20px #ff6a0033;color:white}
+.user-card{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:14px}
+.user-card-top{display:flex;justify-content:space-between;align-items:center}
+.badge{padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700}
+.badge.green{background:#22c55e22;color:var(--green);border:1px solid #22c55e33}
+.badge.orange{background:#ff6a0022;color:var(--primary);border:1px solid #ff6a0033}
+.badge.purple{background:#a855f722;color:#c084fc;border:1px solid #a855f733}
+.badge.gray{background:#ffffff10;color:var(--muted)}
+.plan-card{border-radius:14px;padding:14px;position:relative;overflow:hidden}
+.plan-card.free{background:linear-gradient(135deg,#1f2937,#111827);border:1px solid var(--border)}
+.plan-card.premium{background:linear-gradient(135deg,#ff6a00,#ff9d33);color:white;border:none;box-shadow:0 8px 24px #ff6a0030}
+.plan-card h4{font-size:13px;display:flex;justify-content:space-between}
+.plan-card ul{margin:10px 0 0 16px;font-size:12px;line-height:1.6;opacity:.9}
+.btn-upgrade{margin-top:10px;width:100%;padding:10px;border:none;border-radius:10px;background:white;color:#111827;font-weight:800;cursor:pointer;font-size:13px}
+.btn-upgrade:hover{filter:brightness(0.95)}
+.card-create{background:var(--panel2);border:1px solid var(--border);border-radius:16px;padding:16px}
+.card-create h3{font-size:13px;margin-bottom:12px}
+.card-create label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;display:block;margin:10px 0 6px}
+.card-create input,.card-create select{width:100%;padding:10px 12px;border-radius:10px;background:#0e1118;border:1px solid var(--border);color:var(--text);font-size:13px;outline:none}
+.row{display:flex;gap:8px}.row>div{flex:1}
+.toggles{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.toggle{display:flex;align-items:center;gap:6px;background:#0e1118;border:1px solid var(--border);padding:6px 10px;border-radius:999px;font-size:11px}
+.settings-card{background:#0e1118;border:1px solid var(--border);border-radius:12px;padding:12px}
+.settings-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px dashed #ffffff0a;font-size:12px}
+
+.main{flex:1;padding:24px;max-width:1300px}
+.topbar{display:flex;justify-content:space-between;gap:20px;margin-bottom:18px;flex-wrap:wrap}
+.topbar h2{font-size:22px}
+.topbar p{color:var(--muted);margin-top:6px;max-width:700px;line-height:1.5;font-size:13px}
+.top-actions{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.live-badge{display:flex;align-items:center;gap:8px;background:#0e1118;border:1px solid var(--border);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:700}
+.live-badge .dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #22c55e55}70%{box-shadow:0 0 0 8px #22c55e00}100%{box-shadow:0 0 0 0 #22c55e00}}
+.alerts-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.alert-chip{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--border);padding:9px 12px;border-radius:999px;font-size:12px;max-width:100%}
+.alert-chip.active{border-color:var(--primary)}
+.chip-dot{width:8px;height:8px;background:var(--green);border-radius:50%;flex-shrink:0}
+.chip-actions{display:flex;gap:4px;margin-left:6px}
+.chip-btn{border:none;background:#ffffff10;border-radius:6px;padding:4px 6px;cursor:pointer;font-size:11px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:12px}
+.stat strong{display:block;font-size:18px}
+.stat span{font-size:11px;color:var(--muted)}
+.filters-line{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:11px}
+.filter-btn.active{background:var(--text);color:var(--bg)}
+.results{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+.card{background:var(--panel2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:.15s;cursor:pointer;position:relative}
+.card:hover{transform:translateY(-2px);border-color:#33405a}
+.card.new{border-color:var(--primary)}
+.card.new::after{content:"NOUVEAU";position:absolute;top:8px;left:8px;background:linear-gradient(135deg,var(--primary),#ffb347);color:white;font-size:9px;font-weight:800;padding:4px 7px;border-radius:999px}
+.card-img{height:160px;background:#0e1118;overflow:hidden}
+.card-img img{width:100%;height:100%;object-fit:cover}
+.card-body{padding:10px}
+.card-price{font-size:16px;font-weight:700;color:var(--primary)}
+.card-title{font-size:12px;font-weight:600;margin:5px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:32px}
+.card-meta{display:flex;gap:4px;flex-wrap:wrap}
+.meta{font-size:10px;background:#0e1118;border:1px solid var(--border);padding:2px 6px;border-radius:999px;color:var(--muted)}
+.card-footer{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:8px}
+.empty-state{grid-column:1/-1;background:var(--panel2);border:1px dashed var(--border);border-radius:14px;padding:32px;text-align:center;color:var(--muted)}
+.modal{position:fixed;inset:0;background:#000000b0;backdrop-filter:blur(10px);display:grid;place-items:center;z-index:99;padding:16px}
+.modal.hidden{display:none}
+.modal-content{background:var(--panel2);border:1px solid var(--border);border-radius:18px;max-width:720px;width:100%;max-height:90vh;overflow:auto;position:relative;padding:20px}
+.modal-close{position:absolute;top:10px;right:10px;background:#0e1118;border:1px solid var(--border);width:32px;height:32px;border-radius:50%;color:var(--muted);cursor:pointer}
+
+/* Admin */
+.admin-panel{margin-top:16px;background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:16px;display:none}
+.admin-panel.show{display:block}
+.admin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.admin-stat{background:#0e1118;border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center}
+.admin-stat strong{font-size:18px;display:block}
+.admin-stat span{font-size:11px;color:var(--muted)}
+.admin-table{width:100%;border-collapse:collapse;font-size:12px}
+.admin-table th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;padding:8px;border-bottom:1px solid var(--border)}
+.admin-table td{padding:8px;border-bottom:1px solid #ffffff06}
+.admin-table tr:hover{background:#ffffff04}
+
+.premium-modal{position:fixed;inset:0;background:#000000c0;backdrop-filter:blur(12px);display:none;place-items:center;z-index:100;padding:20px}
+.premium-modal.show{display:grid}
+.premium-box{background:linear-gradient(180deg,#1c212e,#141821);border:1px solid var(--border);border-radius:20px;max-width:520px;width:100%;padding:28px;box-shadow:0 20px 60px #00000080;text-align:center}
+.premium-box h2{font-size:24px}
+.premium-box ul{text-align:left;margin:16px 0 0 18px;line-height:1.7;font-size:13px;color:var(--muted)}
+.premium-box ul b{color:var(--text)}
+@media(max-width:900px){.app{flex-direction:column}.sidebar{width:100%;height:auto;position:static}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div id="authWrapper" class="auth-wrapper">
+  <div class="auth-card">
+    <h1>LeBonAlert <span>Platform</span> <span style="font-size:12px;background:linear-gradient(135deg,#a855f7,#ec4899);padding:3px 8px;border-radius:999px;color:white;vertical-align:middle">PREMIUM</span></h1>
+    <p>Plateforme SaaS : chaque membre crée ses alertes Leboncoin sur <b>toutes les catégories</b>. Notifs <b>Email + Telegram</b> H24.</p>
+    
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <div class="plan-mini" style="flex:1"><strong>🆓 Gratuit</strong><span>3 alertes<br>5 min min<br>📧 Email</span></div>
+      <div class="plan-mini premium" style="flex:1"><strong>⭐ Premium 4.99€/mo</strong><span>∞ alertes<br>30s ultra rapide<br>📧 + 📲 Telegram</span></div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Connexion</button>
+      <button class="auth-tab" data-tab="register">Inscription</button>
+    </div>
+    <div id="authError" class="auth-error"></div>
+
+    <form id="loginForm" class="auth-form">
+      <label>Identifiant ou Email</label>
+      <input type="text" id="loginId" placeholder="admin ou toi@email.com" required>
+      <label>Mot de passe</label>
+      <input type="password" id="loginPass" placeholder="••••••••" required>
+      <button type="submit" class="btn-primary">Se connecter →</button>
+      <div style="margin-top:12px;background:#0e1118;border:1px dashed var(--border);border-radius:10px;padding:10px;font-size:11px;color:var(--muted)">
+        🧪 <b>Compte admin par défaut:</b> <code>admin / admin123</code> (premium + admin)<br>
+        Crée ton compte en 5s, pas de vérif email.
+      </div>
+    </form>
+
+    <form id="registerForm" class="auth-form" style="display:none">
+      <label>Username</label>
+      <input type="text" id="regUser" placeholder="ex: chasseur_clio" pattern="[a-zA-Z0-9_]{3,20}" required>
+      <label>Email</label>
+      <input type="email" id="regEmail" placeholder="toi@email.com" required>
+      <label>Mot de passe</label>
+      <input type="password" id="regPass" placeholder="min 6 caractères" minlength="6" required>
+      <button type="submit" class="btn-primary">Créer mon compte gratuit 🚀</button>
+    </form>
+  </div>
+</div>
+
+<div id="app" class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">🔔</div>
+      <div><h2>LeBonAlert</h2><span>Platform v5 Premium SaaS</span></div>
+    </div>
+
+    <div class="user-card">
+      <div class="user-card-top">
+        <div>
+          <b id="userName">-</b>
+          <small id="userEmail">-</small>
+        </div>
+        <button class="btn-ghost" id="logoutBtn">Logout</button>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+        <span class="badge gray" id="userPlanBadge">🆓 Gratuit</span>
+        <span class="badge gray" id="userAlertsCount">0 alertes</span>
+        <span class="badge purple" id="adminBadge" style="display:none">👑 Admin</span>
+      </div>
+    </div>
+
+    <div id="planCard" class="plan-card free">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="settings-card">
+      <h4 style="font-size:12px;margin-bottom:8px">⚙️ Mes notifications</h4>
+      <div class="settings-row"><span>📧 Email</span><label><input type="checkbox" id="emailEnabled"> Activé</label></div>
+      <div class="settings-row"><span>📲 Telegram Chat ID</span></div>
+      <input type="text" id="telegramChatId" placeholder="ex: 123456789" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;background:#141821;border:1px solid var(--border);color:var(--text);font-size:12px">
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">Trouve ton ID: envoie msg à ton bot → <code>api.telegram.org/botTOKEN/getUpdates</code></div>
+      <div class="settings-row"><span>Telegram actif</span><label><input type="checkbox" id="telegramEnabled"> Oui</label></div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn-ghost" id="saveSettings" style="flex:1">💾 Sauver</button>
+        <button class="btn-ghost" id="testTelegramBtn" style="flex:1">📲 Test</button>
+        <button class="btn-ghost" id="testEmailBtn" style="flex:1">📧 Test</button>
+      </div>
+      <div id="settingsMsg" style="font-size:11px;color:var(--green);margin-top:6px;display:none"></div>
+    </div>
+
+    <div class="card-create">
+      <h3 id="formTitle">➕ Nouvelle alerte (toutes catégories)</h3>
+      <form id="alertForm">
+        <input type="hidden" id="editId">
+        <label>Mots-clés *</label>
+        <input type="text" id="keywords" placeholder="clio 1983, maison 3ch, emploi dev..." required>
+        <label>Catégorie Leboncoin</label>
+        <select id="category"></select>
+        <label>Nom perso</label>
+        <input type="text" id="alertDesc" placeholder="ex: Clio pour resto">
+        <div class="row">
+          <div><label>Prix min</label><input type="number" id="priceMin" placeholder="0"></div>
+          <div><label>Prix max</label><input type="number" id="priceMax" placeholder="20000"></div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Localisation</label>
+            <select id="locationMode">
+              <option value="france">🇫🇷 Toute France</option>
+              <option value="departements">📍 25,39,70,90</option>
+              <option value="region">🗺️ BFC</option>
+            </select>
+          </div>
+          <div>
+            <label>Fréquence</label>
+            <select id="frequency">
+              <option value="30">30s (Premium)</option>
+              <option value="60">1 min (Premium)</option>
+              <option value="120">2 min (Premium)</option>
+              <option value="300" selected>5 min (Gratuit)</option>
+              <option value="600">10 min</option>
+            </select>
+            <div id="freqHint" style="font-size:10px;color:var(--muted);margin-top:2px">Gratuit: min 5 min</div>
+          </div>
+        </div>
+        <div class="toggles">
+          <label class="toggle"><input type="checkbox" id="notifyEmail" checked> 📧 Email</label>
+          <label class="toggle"><input type="checkbox" id="notifyTelegram" checked> 📲 Telegram</label>
+          <label class="toggle"><input type="checkbox" id="active" checked> 🟢 Active</label>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button type="submit" class="btn-primary" style="flex:1" id="submitBtn">🚀 Créer alerte</button>
+          <button type="button" class="btn-ghost" id="cancelEdit" style="display:none">Annuler</button>
+        </div>
+        <div id="limitMsg" style="font-size:11px;color:#fca5a5;margin-top:8px;display:none"></div>
+      </form>
+    </div>
+
+    <div id="adminPanel" class="admin-panel">
+      <h4 style="font-size:13px;margin-bottom:10px">👑 Admin Panel</h4>
+      <div class="admin-stats">
+        <div class="admin-stat"><strong id="adminTotalUsers">-</strong><span>Users</span></div>
+        <div class="admin-stat"><strong id="adminPremiumUsers">-</strong><span>Premium</span></div>
+        <div class="admin-stat"><strong id="adminRevenue">-</strong><span>Revenu</span></div>
+      </div>
+      <div class="admin-stats">
+        <div class="admin-stat"><strong id="adminTotalAlerts">-</strong><span>Alertes</span></div>
+        <div class="admin-stat"><strong id="adminActiveAlerts">-</strong><span>Actives</span></div>
+        <div class="admin-stat"><strong id="adminTotalSeen">-</strong><span>Vues</span></div>
+      </div>
+      <div style="max-height:300px;overflow:auto;margin-top:10px;border:1px solid var(--border);border-radius:8px">
+        <table class="admin-table">
+          <thead><tr><th>User</th><th>Plan</th><th>Alertes</th><th>Actions</th></tr></thead>
+          <tbody id="adminUsersBody"></tbody>
+        </table>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button class="btn-ghost" id="refreshAdmin">🔄 Refresh</button>
+        <button class="btn-ghost" id="exportUsers">💾 Export users</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h2>Mes alertes (toutes catégories)</h2>
+        <p>Crée des alertes sur <b>voitures, immo, emploi, maison...</b> Chaque membre est notifié par <b>Email</b> et <b>Telegram</b>. Modèle Freemium: 3 alertes gratuites (5min, email), Premium 4.99€ illimité (30s, Telegram). <span id="planInfo"></span></p>
+      </div>
+      <div class="top-actions">
+        <button class="btn-ghost" id="upgradeBtn" style="background:linear-gradient(135deg,#a855f7,#ec4899);color:white;border:none;font-weight:700">⭐ Passer Premium 4.99€</button>
+        <button class="btn-ghost" id="refreshBtn">🔄</button>
+        <div class="live-badge"><span class="dot"></span> H24</div>
+      </div>
+    </header>
+
+    <section class="alerts-bar" id="alertsBar"></section>
+
+    <section class="stats">
+      <div class="stat"><strong id="statAlerts">0</strong><span>Mes alertes actives</span></div>
+      <div class="stat"><strong id="statTotal">0</strong><span>Annonces vues</span></div>
+      <div class="stat"><strong id="statNew">0</strong><span>Nouveautés</span></div>
+      <div class="stat"><strong id="statNext">-</strong><span>Dernière vérif</span></div>
+    </section>
+
+    <div class="filters-line">
+      <button class="filter-btn active" data-filter="all">Toutes</button>
+      <button class="filter-btn" data-filter="new">🆕 Nouveautés</button>
+      <select id="filterByAlert"><option value="">📋 Toutes mes alertes</option></select>
+      <select id="filterByCategory"><option value="">📂 Toutes catégories</option></select>
+      <input type="text" id="searchInResults" placeholder="Filtrer...">
+    </div>
+
+    <section class="results" id="results"></section>
+  </main>
+
+  <div id="modal" class="modal hidden"><div class="modal-content"><button class="modal-close" id="closeModal">✕</button><div id="modalBody"></div></div></div>
+
+  <div id="premiumModal" class="premium-modal">
+    <div class="premium-box">
+      <div style="font-size:40px">⭐</div>
+      <h2>Passe Premium à 4.99€/mois</h2>
+      <p style="color:var(--muted);margin-top:8px;font-size:13px">Débloque tout pour chasser les meilleures annonces avant tout le monde</p>
+      <ul>
+        <li><b>∞ alertes illimitées</b> au lieu de 3</li>
+        <li><b>30s ultra rapide</b> au lieu de 5 min → tu es 10x plus rapide</li>
+        <li><b>📲 Telegram instantané</b> avec photo + prix + lien (réservé Premium)</li>
+        <li><b>📧 Email + Telegram</b> par alerte, configurable</li>
+        <li><b>Toutes catégories</b> : voitures, immo, emploi, maison...</li>
+        <li><b>Support prioritaire</b> + pas de pub</li>
+      </ul>
+      <div style="display:flex;gap:10px;margin-top:18px">
+        <button class="btn-primary" id="checkoutBtn" style="flex:1">💳 Payer 4.99€/mois avec Stripe</button>
+        <button class="btn-ghost" id="closePremium">Plus tard</button>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--muted)">Paiement sécurisé Stripe • Résiliable en 1 clic • Sans engagement<br>Mode démo sans Stripe : admin peut activer premium manuellement</div>
+      <div id="premiumMsg" style="margin-top:10px;font-size:12px;display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
